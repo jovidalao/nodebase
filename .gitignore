@@ -45,3 +45,4 @@ next-env.d.ts
 # Agent
 Claude.md
 
+prisma/migrations/*
