@@ -1,10 +1,15 @@
-import prisma from "@/lib/prisma";
+import { requireAuth, requireUnAuth } from "@/lib/auth-utils";
+import { caller } from "@/trpc/server";
 
 const Page = async () => {
-  const users = await prisma.user.findMany();
+  await requireAuth();
+  const data = await caller.getUsers();
   return (
-    <div>
-      <pre>{JSON.stringify(users, null, 2)}</pre>
+    <div
+      className="min-h-screen flex items-center 
+    justify-center flex-col gap-y-6"
+    >
+      {JSON.stringify(data, null, 2)}
     </div>
   );
 };
