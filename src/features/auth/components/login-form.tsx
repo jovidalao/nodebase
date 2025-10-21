@@ -71,8 +71,8 @@ export function LoginForm() {
   return (
     <div className="flex flex-col gap-6">
       <Card>
-        <CardHeader>
-          <CardTitle>Login</CardTitle>
+        <CardHeader className="justify-center">
+          <CardTitle className="text-center">Login</CardTitle>
           <CardDescription>Login to your account</CardDescription>
         </CardHeader>
         <CardContent>
