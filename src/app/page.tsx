@@ -4,6 +4,8 @@ import { SignOutButton } from "@/features/auth/components/sign-out-button";
 import { useTRPC } from "@/trpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { toast } from "sonner";
+
 const Page = () => {
   const trpc = useTRPC();
   const { data } = useQuery(trpc.getWorkflows.queryOptions());
@@ -16,6 +18,17 @@ const Page = () => {
     })
   );
 
+  const testAi = useMutation(
+    trpc.testAi.mutationOptions({
+      onSuccess: () => {
+        toast.success("AI execution started");
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    })
+  );
+
   return (
     <div
       className="min-h-screen flex items-center 
@@ -24,6 +37,9 @@ const Page = () => {
       <SignOutButton />
       <Button disabled={create.isPending} onClick={() => create.mutate()}>
         Create Workflow
+      </Button>
+      <Button disabled={testAi.isPending} onClick={() => testAi.mutate()}>
+        Test AI
       </Button>
       <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
