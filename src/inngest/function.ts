@@ -2,7 +2,7 @@ import { inngest } from "./client";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { generateText } from "ai";
 import type { LanguageModel } from "ai";
-import { zhipu } from "zhipu-ai-provider";
+import { google } from "@ai-sdk/google";
 
 const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY,
@@ -12,7 +12,7 @@ export const executeAi = inngest.createFunction(
   { id: "execute-ai" },
   { event: "execute/ai" },
   async ({ event, step }) => {
-    const { steps } = await step.ai.wrap(
+    const { steps: openrouterSteps } = await step.ai.wrap(
       "openrouter-generate-text",
       generateText,
       {
@@ -21,19 +21,29 @@ export const executeAi = inngest.createFunction(
         ) as LanguageModel,
         system: "You are a helpful assistant.",
         prompt: event.data.prompt,
+        experimental_telemetry: {
+          isEnabled: true,
+          recordInputs: true,
+          recordOutputs: true,
+        },
       }
     );
 
-    const { steps: zhipuSteps } = await step.ai.wrap(
-      "zhipu-generate-text",
+    const { steps: geminiSteps } = await step.ai.wrap(
+      "gemini-generate-text",
       generateText,
       {
-        model: zhipu.chat("glm-4.5-air") as unknown as LanguageModel,
+        model: google.chat("gemini-2.5-flash") as LanguageModel,
         system: "You are a helpful assistant.",
         prompt: event.data.prompt,
+        experimental_telemetry: {
+          isEnabled: true,
+          recordInputs: true,
+          recordOutputs: true,
+        },
       }
     );
 
-    return { step };
+    return { steps: [...openrouterSteps, ...geminiSteps] };
   }
 );
