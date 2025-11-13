@@ -29,7 +29,7 @@ import { Github, Loader2 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
 const loginSchema = z.object({
-  email: z.email({ message: "Invalid email address" }),
+  email: z.string().email({ message: "Invalid email address" }),
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters long" }),
